@@ -25,7 +25,7 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 builder.Services.AddScoped<GoogleOAuthService>();
 
 // Register PlexOAuthService for DI
-builder.Services.AddScoped<PlexOAuthService>();
+builder.Services.AddHttpClient<PlexOAuthService>();
 
 // Register JwtService for DI
 builder.Services.AddSingleton<SsoBackend.Infrastructure.JwtService>();
@@ -54,7 +54,8 @@ if (app.Environment.IsDevelopment())
 
 
 // Register endpoints from separate routes
-app.MapAuthRoutes();
-app.MapAdminRoutes();
+app.MapPlexAuthRoutes();
+app.MapGoogleAuthRoutes();
+app.MapUserRoutes();
 
 app.Run();
