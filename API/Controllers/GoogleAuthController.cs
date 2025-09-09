@@ -29,6 +29,8 @@ public class GoogleAuthController
                 return Results.Redirect(errorUrl);
             }
             var user = await AuthHelpers.FindOrCreateUser(db, userInfo);
+            // Set session
+            context.Session.SetString("userEmail", user.Email);
             var jwtToken = jwtService.GenerateToken(user);
             var successUrl = $"http://localhost:5173/auth/callback?token={jwtToken}";
             return Results.Redirect(successUrl);

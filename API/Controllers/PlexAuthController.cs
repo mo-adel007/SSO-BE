@@ -24,6 +24,8 @@ public class PlexAuthController
             var (accessToken, idToken) = await plexService.ExchangeCodeForTokenAsync(code);
             var userInfo = await plexService.GetUserInfoAsync(accessToken);
             var user = await AuthHelpers.FindOrCreateUser(db, userInfo);
+            // Set session
+            context.Session.SetString("userEmail", user.Email);
             var jwt = jwtService.GenerateToken(user);
             var redirectUrl = $"http://localhost:5173/auth/callback?token={jwt}";
             return Results.Redirect(redirectUrl);

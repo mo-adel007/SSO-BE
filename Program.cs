@@ -21,6 +21,7 @@ var connectionString = builder.Configuration.GetConnectionString("DefaultConnect
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlServer(connectionString));
     
+
 // Register GoogleOAuthService for DI
 builder.Services.AddScoped<GoogleOAuthService>();
 
@@ -30,6 +31,18 @@ builder.Services.AddHttpClient<PlexOAuthService>();
 // Register JwtService for DI
 builder.Services.AddSingleton<SsoBackend.Infrastructure.JwtService>();
 
+builder.Services.AddDistributedMemoryCache();
+
+// Add session services
+builder.Services.AddSession(options =>
+{
+    options.Cookie.HttpOnly = true;
+    options.Cookie.IsEssential = true;
+    options.Cookie.SameSite = SameSiteMode.Lax;
+    options.Cookie.SecurePolicy = CookieSecurePolicy.SameAsRequest;
+    options.IdleTimeout = TimeSpan.FromHours(12);
+});
+
 // Enable CORS for frontend
 builder.Services.AddCors(options =>
 {
@@ -37,13 +50,20 @@ builder.Services.AddCors(options =>
         policy.WithOrigins("http://localhost:5173")
               .AllowAnyHeader()
               .AllowAnyMethod()
+              .AllowCredentials()
     );
 });
 
 var app = builder.Build();
+
 // Use CORS
 app.UseCors("FrontendPolicy");
+
+// Use session middleware
+app.UseSession();
+
 // Configure middleware
+
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
