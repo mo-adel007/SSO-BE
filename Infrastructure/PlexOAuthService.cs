@@ -20,7 +20,8 @@ public class PlexOAuthService
 
     private async Task EnsureEndpointsAsync()
     {
-        if (_authorizationEndpoint != null && _tokenEndpoint != null) return;
+        if (_authorizationEndpoint != null && _tokenEndpoint != null)
+            return;
 
         var discoveryUrl = "https://accounts.plex.com/.well-known/openid-configuration";
 
@@ -50,23 +51,27 @@ public class PlexOAuthService
         var clientSecret = _config["PLEX_CLIENT_SECRET"];
         var redirectUri = _config["PLEX_REDIRECT_URI"];
 
-        var body = new FormUrlEncodedContent(new[]
-        {
-            new KeyValuePair<string,string>("grant_type", "authorization_code"),
-            new KeyValuePair<string,string>("code", code),
-            new KeyValuePair<string,string>("redirect_uri", redirectUri),
-            new KeyValuePair<string,string>("client_id", clientId),
-            new KeyValuePair<string,string>("client_secret", clientSecret),
-        });
+        var body = new FormUrlEncodedContent(
+            new[]
+            {
+                new KeyValuePair<string, string>("grant_type", "authorization_code"),
+                new KeyValuePair<string, string>("code", code),
+                new KeyValuePair<string, string>("redirect_uri", redirectUri),
+                new KeyValuePair<string, string>("client_id", clientId),
+                new KeyValuePair<string, string>("client_secret", clientSecret),
+            }
+        );
 
         var response = await _http.PostAsync(_tokenEndpoint, body);
         response.EnsureSuccessStatusCode();
-    
+
         var raw = await response.Content.ReadAsStringAsync();
-         if (!response.IsSuccessStatusCode)
-    {
-        throw new InvalidOperationException($"Token endpoint returned {(int)response.StatusCode}: {raw}");
-    }
+        if (!response.IsSuccessStatusCode)
+        {
+            throw new InvalidOperationException(
+                $"Token endpoint returned {(int)response.StatusCode}: {raw}"
+            );
+        }
         Console.WriteLine("Plex Token Response: " + raw);
 
         var json = await response.Content.ReadFromJsonAsync<JsonElement>();
@@ -77,12 +82,17 @@ public class PlexOAuthService
         return (accessToken!, idToken!);
     }
 
-    public async Task<SsoBackend.Infrastructure.Models.PlexUserInfo> GetUserInfoAsync(string accessToken)
+    public async Task<SsoBackend.Infrastructure.Models.PlexUserInfo> GetUserInfoAsync(
+        string accessToken
+    )
     {
         await EnsureEndpointsAsync();
 
         var request = new HttpRequestMessage(HttpMethod.Get, _userinfoEndpoint);
-        request.Headers.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", accessToken);
+        request.Headers.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue(
+            "Bearer",
+            accessToken
+        );
 
         var response = await _http.SendAsync(request);
         response.EnsureSuccessStatusCode();
@@ -90,7 +100,9 @@ public class PlexOAuthService
         var json = await response.Content.ReadFromJsonAsync<System.Text.Json.JsonElement>();
 
         string? email = json.TryGetProperty("email", out var emailEl) ? emailEl.GetString() : null;
-        string? preferred = json.TryGetProperty("preferred_username", out var prefEl) ? prefEl.GetString() : null;
+        string? preferred = json.TryGetProperty("preferred_username", out var prefEl)
+            ? prefEl.GetString()
+            : null;
         string? name = json.TryGetProperty("name", out var nameEl) ? nameEl.GetString() : null;
         string? sub = json.TryGetProperty("sub", out var subEl) ? subEl.GetString() : null;
 
@@ -98,7 +110,7 @@ public class PlexOAuthService
         {
             Email = email ?? string.Empty,
             Name = preferred ?? name ?? email ?? string.Empty,
-            Sub = sub ?? string.Empty
+            Sub = sub ?? string.Empty,
         };
     }
 }

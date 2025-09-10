@@ -1,6 +1,6 @@
+using System.IdentityModel.Tokens.Jwt;
 using Microsoft.EntityFrameworkCore;
 using SsoBackend.Infrastructure;
-using System.IdentityModel.Tokens.Jwt;
 
 namespace SsoBackend.API.Controllers;
 
@@ -12,7 +12,12 @@ public class GoogleAuthController
         return Results.Json(new { url = authUrl });
     }
 
-    public async Task<IResult> HandleGoogleCallback(HttpContext context, GoogleOAuthService googleService, AppDbContext db, JwtService jwtService)
+    public async Task<IResult> HandleGoogleCallback(
+        HttpContext context,
+        GoogleOAuthService googleService,
+        AppDbContext db,
+        JwtService jwtService
+    )
     {
         var code = context.Request.Query["code"].ToString();
         if (string.IsNullOrEmpty(code))

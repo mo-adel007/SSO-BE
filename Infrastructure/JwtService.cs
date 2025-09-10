@@ -14,7 +14,8 @@ public class JwtService
 
     public JwtService()
     {
-        _jwtSecret = Environment.GetEnvironmentVariable("JWT_SECRET") ?? "dev_secret_key_please_change";
+        _jwtSecret =
+            Environment.GetEnvironmentVariable("JWT_SECRET") ?? "dev_secret_key_please_change";
         _jwtIssuer = Environment.GetEnvironmentVariable("JWT_ISSUER") ?? "sso-backend";
     }
 
@@ -25,7 +26,7 @@ public class JwtService
         {
             new Claim(JwtRegisteredClaimNames.Sub, user.Email),
             new Claim(JwtRegisteredClaimNames.Email, user.Email),
-            new Claim("name", user.Name ?? "")
+            new Claim("name", user.Name ?? ""),
         };
 
         var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_jwtSecret));
@@ -48,7 +49,7 @@ public class JwtService
         var claims = new List<Claim>
         {
             new Claim(JwtRegisteredClaimNames.Sub, email),
-            new Claim(JwtRegisteredClaimNames.Email, email)
+            new Claim(JwtRegisteredClaimNames.Email, email),
         };
 
         if (extraClaims != null)

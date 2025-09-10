@@ -1,12 +1,16 @@
 using Microsoft.EntityFrameworkCore;
-using SsoBackend.Infrastructure;
 using SsoBackend.API.Controllers;
+using SsoBackend.Infrastructure;
 
 namespace SsoBackend.API.Controllers;
 
 public class UserController
 {
-    public async Task<IResult> GetCurrentUser(HttpContext context, AppDbContext db, JwtService jwtService)
+    public async Task<IResult> GetCurrentUser(
+        HttpContext context,
+        AppDbContext db,
+        JwtService jwtService
+    )
     {
         var token = AuthHelpers.ExtractBearerToken(context);
         if (string.IsNullOrEmpty(token))
@@ -18,7 +22,9 @@ public class UserController
         {
             var handler = new System.IdentityModel.Tokens.Jwt.JwtSecurityTokenHandler();
             var jwt = handler.ReadJwtToken(token);
-            Console.WriteLine($"[Auth] JWT Claims: {string.Join(", ", jwt.Claims.Select(c => c.Type + ":" + c.Value))}");
+            Console.WriteLine(
+                $"[Auth] JWT Claims: {string.Join(", ", jwt.Claims.Select(c => c.Type + ":" + c.Value))}"
+            );
             var userEmail = AuthHelpers.GetEmailFromToken(token);
             Console.WriteLine($"[Auth] Extracted email from token: {userEmail}");
             if (string.IsNullOrEmpty(userEmail))
@@ -33,7 +39,14 @@ public class UserController
                 return Results.Unauthorized();
             }
             Console.WriteLine($"[Auth] User found: {user.Email} (ID: {user.Id})");
-            return Results.Json(new { id = user.Id, name = user.Name, email = user.Email });
+            return Results.Json(
+                new
+                {
+                    id = user.Id,
+                    name = user.Name,
+                    email = user.Email,
+                }
+            );
         }
         catch (Exception ex)
         {

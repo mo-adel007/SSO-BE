@@ -35,7 +35,7 @@ public class GoogleOAuthService
             ["client_id"] = clientId!,
             ["client_secret"] = clientSecret!,
             ["redirect_uri"] = redirectUri!,
-            ["grant_type"] = "authorization_code"
+            ["grant_type"] = "authorization_code",
         };
         var response = await _http.PostAsync(tokenUrl, new FormUrlEncodedContent(payload));
         var json = await response.Content.ReadAsStringAsync();

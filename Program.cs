@@ -1,9 +1,7 @@
-
-using Microsoft.EntityFrameworkCore;
-using SsoBackend.Infrastructure; // <-- adjust namespace if different
-using SsoBackend.API.Routes;
 using DotNetEnv;
-
+using Microsoft.EntityFrameworkCore;
+using SsoBackend.API.Routes;
+using SsoBackend.Infrastructure; // <-- adjust namespace if different
 
 // Load .env file
 Env.Load();
@@ -15,12 +13,11 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 // Configure SQL Server connection
-var connectionString = builder.Configuration.GetConnectionString("DefaultConnection")
+var connectionString =
+    builder.Configuration.GetConnectionString("DefaultConnection")
     ?? "Server=localhost;Database=SsoDb;Trusted_Connection=True;TrustServerCertificate=True;";
 
-builder.Services.AddDbContext<AppDbContext>(options =>
-    options.UseSqlServer(connectionString));
-    
+builder.Services.AddDbContext<AppDbContext>(options => options.UseSqlServer(connectionString));
 
 // Register GoogleOAuthService for DI
 builder.Services.AddScoped<GoogleOAuthService>();
@@ -46,11 +43,14 @@ builder.Services.AddSession(options =>
 // Enable CORS for frontend
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("FrontendPolicy", policy =>
-        policy.WithOrigins("http://localhost:5173")
-              .AllowAnyHeader()
-              .AllowAnyMethod()
-              .AllowCredentials()
+    options.AddPolicy(
+        "FrontendPolicy",
+        policy =>
+            policy
+                .WithOrigins("http://localhost:5173")
+                .AllowAnyHeader()
+                .AllowAnyMethod()
+                .AllowCredentials()
     );
 });
 
@@ -71,7 +71,6 @@ if (app.Environment.IsDevelopment())
 }
 
 // app.UseHttpsRedirection();
-
 
 // Register endpoints from separate routes
 app.MapPlexAuthRoutes();

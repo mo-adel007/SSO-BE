@@ -1,10 +1,9 @@
-
-using Microsoft.EntityFrameworkCore;
+using System.IdentityModel.Tokens.Jwt;
 using Microsoft.AspNetCore.Http;
+using Microsoft.EntityFrameworkCore;
+using SsoBackend.Domain;
 using SsoBackend.Infrastructure;
 using SsoBackend.Infrastructure.Models;
-using System.IdentityModel.Tokens.Jwt;
-using SsoBackend.Domain;
 
 namespace SsoBackend.API.Controllers;
 

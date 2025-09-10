@@ -1,7 +1,7 @@
+using System.Text.Json;
 using Microsoft.EntityFrameworkCore;
 using SsoBackend.Infrastructure;
 using SsoBackend.Infrastructure.Models;
-using System.Text.Json;
 
 namespace SsoBackend.API.Controllers;
 
@@ -13,7 +13,12 @@ public class PlexAuthController
         return Results.Json(new { url });
     }
 
-    public async Task<IResult> HandlePlexCallback(HttpContext context, PlexOAuthService plexService, AppDbContext db, JwtService jwtService)
+    public async Task<IResult> HandlePlexCallback(
+        HttpContext context,
+        PlexOAuthService plexService,
+        AppDbContext db,
+        JwtService jwtService
+    )
     {
         var code = context.Request.Query["code"].ToString();
         if (string.IsNullOrEmpty(code))
@@ -32,7 +37,9 @@ public class PlexAuthController
         }
         catch (Exception ex)
         {
-            return Results.Redirect($"/login?error=true&message={Uri.EscapeDataString(ex.Message)}");
+            return Results.Redirect(
+                $"/login?error=true&message={Uri.EscapeDataString(ex.Message)}"
+            );
         }
     }
 }
