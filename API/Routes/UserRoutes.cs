@@ -42,9 +42,15 @@ public static class UserRoutes
 
         app.MapPost(
             "/auth/logout",
-            (HttpContext context) =>
+            async (HttpContext context, PlexOAuthService plexService) =>
             {
+                var token = context.Session.GetString("access_token");
+                if (!string.IsNullOrEmpty(token))
+                {
+                    await plexService.RevokeTokenAsync(token);
+                }
                 context.Session.Clear();
+                context.Response.Cookies.Delete(".AspNetCore.Session");
                 return Results.Json(new { success = true, message = "Logout successful." });
             }
         );

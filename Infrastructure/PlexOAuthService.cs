@@ -11,6 +11,8 @@ public class PlexOAuthService
     private string? _authorizationEndpoint;
     private string? _tokenEndpoint;
     private string? _userinfoEndpoint;
+    private string? _revocationEndpoint;
+    private string? _introspectionEndpoint;
 
     public PlexOAuthService(HttpClient http, IConfiguration config)
     {
@@ -117,5 +119,29 @@ public class PlexOAuthService
             Name = preferred ?? name ?? email ?? string.Empty,
             Sub = sub ?? string.Empty,
         };
+    }
+
+    public async Task<bool> RevokeTokenAsync(string token)
+    {
+        await EnsureEndpointsAsync();
+
+        var clientId = _config["PLEX_CLIENT_ID"];
+        var clientSecret = _config["PLEX_CLIENT_SECRET"];
+
+        using var client = new HttpClient();
+        var byteArray = System.Text.Encoding.ASCII.GetBytes($"{clientId}:{clientSecret}");
+        client.DefaultRequestHeaders.Authorization =
+            new System.Net.Http.Headers.AuthenticationHeaderValue(
+                "Basic",
+                Convert.ToBase64String(byteArray)
+            );
+
+        var content = new FormUrlEncodedContent(
+            new[] { new KeyValuePair<string, string>("token", token) }
+        );
+
+        var response = await client.PostAsync(_revocationEndpoint, content);
+
+        return response.IsSuccessStatusCode;
     }
 }
