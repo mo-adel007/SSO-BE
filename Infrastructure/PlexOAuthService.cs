@@ -20,7 +20,7 @@ public class PlexOAuthService
 
     private async Task EnsureEndpointsAsync()
     {
-        if (_authorizationEndpoint != null && _tokenEndpoint != null)
+        if (_authorizationEndpoint != null && _tokenEndpoint != null && _revocationEndpoint != null)
             return;
 
         var discoveryUrl = "https://accounts.plex.com/.well-known/openid-configuration";
@@ -30,6 +30,8 @@ public class PlexOAuthService
         _authorizationEndpoint = doc.GetProperty("authorization_endpoint").GetString();
         _tokenEndpoint = doc.GetProperty("token_endpoint").GetString();
         _userinfoEndpoint = doc.GetProperty("userinfo_endpoint").GetString();
+        _revocationEndpoint = doc.GetProperty("revocation_endpoint").GetString();
+        _introspectionEndpoint = doc.GetProperty("introspection_endpoint").GetString();
     }
 
     public async Task<string> GetAuthorizationUrlAsync()
@@ -63,6 +65,10 @@ public class PlexOAuthService
         );
 
         var response = await _http.PostAsync(_tokenEndpoint, body);
+        if (response == null)
+        {
+            throw new InvalidOperationException("No response from token endpoint");
+        }
         response.EnsureSuccessStatusCode();
 
         var raw = await response.Content.ReadAsStringAsync();
@@ -72,7 +78,6 @@ public class PlexOAuthService
                 $"Token endpoint returned {(int)response.StatusCode}: {raw}"
             );
         }
-        Console.WriteLine("Plex Token Response: " + raw);
 
         var json = await response.Content.ReadFromJsonAsync<JsonElement>();
 
