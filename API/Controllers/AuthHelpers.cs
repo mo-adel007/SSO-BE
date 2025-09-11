@@ -1,9 +1,8 @@
 using System.IdentityModel.Tokens.Jwt;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
-using SsoBackend.Domain;
 using SsoBackend.Infrastructure;
-using SsoBackend.Infrastructure.Models;
+using SsoBackend.Models;
 
 namespace SsoBackend.API.Controllers;
 

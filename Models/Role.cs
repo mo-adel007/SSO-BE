@@ -1,4 +1,4 @@
-namespace SsoBackend.Domain;
+namespace SsoBackend.Models;
 
 public class Role
 {

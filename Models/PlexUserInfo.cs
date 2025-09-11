@@ -1,4 +1,4 @@
-namespace SsoBackend.Infrastructure.Models;
+namespace SsoBackend.Models;
 
 public class PlexUserInfo
 {

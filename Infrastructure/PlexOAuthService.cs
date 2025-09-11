@@ -1,6 +1,7 @@
 using System.Net.Http.Json;
 using System.Text.Json;
 using Microsoft.Extensions.Configuration;
+using SsoBackend.Models;
 
 namespace SsoBackend.Infrastructure;
 
@@ -89,9 +90,7 @@ public class PlexOAuthService
         return (accessToken!, idToken!);
     }
 
-    public async Task<SsoBackend.Infrastructure.Models.PlexUserInfo> GetUserInfoAsync(
-        string accessToken
-    )
+    public async Task<SsoBackend.Models.PlexUserInfo> GetUserInfoAsync(string accessToken)
     {
         await EnsureEndpointsAsync();
 
@@ -113,7 +112,7 @@ public class PlexOAuthService
         string? name = json.TryGetProperty("name", out var nameEl) ? nameEl.GetString() : null;
         string? sub = json.TryGetProperty("sub", out var subEl) ? subEl.GetString() : null;
 
-        return new SsoBackend.Infrastructure.Models.PlexUserInfo
+        return new SsoBackend.Models.PlexUserInfo
         {
             Email = email ?? string.Empty,
             Name = preferred ?? name ?? email ?? string.Empty,

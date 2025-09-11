@@ -1,6 +1,7 @@
 using System.Net.Http;
 using System.Text.Json;
 using Microsoft.Extensions.Configuration;
+using SsoBackend.Models;
 
 namespace SsoBackend.Infrastructure;
 
@@ -60,10 +61,4 @@ public class GoogleOAuthService
 
         return new GoogleUserInfo { Email = email, Name = name ?? "" };
     }
-}
-
-public class GoogleUserInfo
-{
-    public string Email { get; set; } = string.Empty;
-    public string Name { get; set; } = string.Empty;
 }

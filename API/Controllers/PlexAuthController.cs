@@ -1,7 +1,7 @@
 using System.Text.Json;
 using Microsoft.EntityFrameworkCore;
 using SsoBackend.Infrastructure;
-using SsoBackend.Infrastructure.Models;
+using SsoBackend.Models;
 
 namespace SsoBackend.API.Controllers;
 
